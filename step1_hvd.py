@@ -108,7 +108,7 @@ model.compile(optimizer=opt,
               loss='categorical_crossentropy', 
               metrics=['accuracy'])
 
-model.fit_generator(batches, steps_per_epoch=batches.samples//batch_size // hvd.size(), nb_epoch=1,
+model.fit_generator(batches, steps_per_epoch=batches.samples//batch_size // hvd.size(), nb_epoch=10,
                 validation_data=valid_batches, validation_steps=valid_batches.samples//batch_size//hvd.size())
 
 

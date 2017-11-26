@@ -5,7 +5,7 @@ from PIL import Image
 import json
 from keras.preprocessing import image
 from keras.models import model_from_json
-
+# Ref: https://github.com/DeepLearningSandbox/DeepLearningSandbox/tree/master/image_recognition
 target_size = (224,224)
 json_file = open('model.json','r')
 loaded_model_json = json_file.read()

@@ -32,7 +32,7 @@ def preprocess_image(im):
     im = (im - vgg_mean)
     return im[:, ::-1] # RGB to BGR
 
-def create_vgg16(x=None):
+def create_vgg16(num_classes):
     # we initialize the model
     model = Sequential()
     # Conv Block 1
@@ -63,7 +63,7 @@ def create_vgg16(x=None):
     model.add(Flatten())
     model.add(Dense(4096, activation='relu'))
     model.add(Dense(4096, activation='relu'))
-    model.add(Dense(1000, activation='softmax'))
+    model.add(Dense(num_classes, activation='softmax'))
     return model
 
 def get_batches(directory, target_size=target_size, batch_size=batch_size, shuffle=False):
@@ -80,19 +80,20 @@ def get_weights(path, download=False):
 batches = get_batches(path+'train', shuffle=True)
 valid_batches = get_batches(path+'valid', batch_size=batch_size*2, shuffle=False)
 
-initial_model = create_vgg16()
-initial_model.load_weights(model_path)
+num_classes = len(batches.class_indices)
+model = create_vgg16(num_classes)
+#model.load_weights(model_path)
 
 #### 
 if hvd.rank() == 0:
   with open('labels.txt','w') as labels:
     labels.write(json.dumps(batches.class_indices))
    
-initial_model = create_vgg16()
+#initial_model = create_vgg16()
 #initial_model.load_weights(model_path) # we may begin from scratch
 
-x = Dense(batches.num_class, activation='softmax')(initial_model.layers[-2].output)
-model = Model(initial_model.input, x)
+#x = Dense(batches.num_class, activation='softmax')(initial_model.layers[-2].output)
+#model = Model(initial_model.input, x)
 # for layer in initial_model.layers: layer.trainable=False # for scratch build
 #opt = Adam(lr=0.001)
 opt = SGD(lr=0.01)
